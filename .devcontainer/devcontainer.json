@@ -1,0 +1,11 @@
+{
+  "name": "Stellar Commit Club",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bash scripts/setup.sh",
+  "customizations": { "vscode": { "extensions": ["rust-lang.rust-analyzer"] } },
+  "forwardPorts": [3000]
+}

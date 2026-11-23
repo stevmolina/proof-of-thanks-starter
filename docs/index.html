@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proof of Thanks</title>
+  <style>
+    :root { --bg:#0b1020; --card:#151b31; --text:#eef1ff; --muted:#9aa3c7; --accent:#7c5cff; }
+    @media (prefers-color-scheme: light) { :root { --bg:#f6f7fb; --card:#fff; --text:#141a33; --muted:#5b6386; } }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--text); }
+    main { max-width: 640px; margin: 0 auto; padding: 32px 16px; }
+    h1 { margin: 0 0 4px; } p.sub { color: var(--muted); margin: 0 0 24px; }
+    .card { background: var(--card); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+    label { display:block; font-size: 14px; color: var(--muted); margin: 10px 0 4px; }
+    input, textarea { width:100%; padding:10px; border-radius:10px; border:1px solid #3a4266; background:transparent; color:var(--text); font: inherit; }
+    button { margin-top: 12px; padding: 10px 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 600; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; }
+    .note { border-top: 1px solid #2a3150; padding: 10px 0; } .note small { color: var(--muted); }
+    #status { color: var(--muted); font-size: 14px; min-height: 20px; word-break: break-all; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Proof of Thanks 💜</h1>
+  <p class="sub">Dejá un agradecimiento público en Stellar Testnet, firmado con tu wallet. Sin plata real.</p>
+
+  <div class="card">
+    <button id="connect">Conectar Freighter</button>
+    <div id="who" class="sub"></div>
+    <label for="to">¿A quién le agradecés?</label>
+    <input id="to" maxlength="64" placeholder="Elisa" />
+    <label for="msg">¿Por qué?</label>
+    <textarea id="msg" maxlength="280" rows="3" placeholder="Por enseñarme a hacer mi primer PR"></textarea>
+    <button id="send" disabled>Enviar agradecimiento</button>
+    <p id="status"></p>
+  </div>
+
+  <div class="card">
+    <strong id="total">Agradecimientos</strong>
+    <div id="notes"></div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@stellar/stellar-sdk@17.4.0/dist/stellar-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stellar/freighter-api@6.0.1/build/index.min.js"></script>
+<script src="config.js"></script>
+<script src="gratitude-client.js"></script>
+<script>
+  const client = GratitudeClient(StellarSdk, CONFIG);
+  const $ = (id) => document.getElementById(id);
+  const status = (t) => ($("status").innerHTML = t);
+  let me = null;
+
+  async function refresh() {
+    try {
+      const notes = await client.list(20);
+      $("total").textContent = `Agradecimientos (${notes.length ? notes[0].id : 0})`;
+      $("notes").innerHTML = notes.map((n) =>
+        `<div class="note"><b>→ ${esc(n.to)}</b>: ${esc(n.message)}<br><small>de ${n.from.slice(0, 6)}…${n.from.slice(-4)} · #${n.id}</small></div>`
+      ).join("") || "<p class='sub'>Todavía no hay. ¡Sé el primero!</p>";
+    } catch (e) { $("notes").textContent = "No pude leer el contrato: " + e.message; }
+  }
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+  $("connect").onclick = async () => {
+    const f = window.freighterApi;
+    if (!(await f.isConnected()).isConnected) return status('Instalá <a href="https://www.freighter.app" target="_blank">Freighter</a> y ponela en Testnet.');
+    const acc = await f.requestAccess();
+    if (acc.error) return status("Freighter: " + acc.error);
+    const net = await f.getNetworkDetails();
+    if (net.networkPassphrase !== CONFIG.networkPassphrase) return status("Cambiá Freighter a <b>Testnet</b> y probá de nuevo.");
+    me = acc.address;
+    $("who").textContent = "Conectado: " + me.slice(0, 6) + "…" + me.slice(-4);
+    $("send").disabled = false;
+    status("Si tu cuenta es nueva, fondeala gratis: <a target=_blank href='https://friendbot.stellar.org/?addr=" + me + "'>Friendbot</a>");
+  };
+
+  $("send").onclick = async () => {
+    const to = $("to").value.trim(), msg = $("msg").value.trim();
+    if (!to || !msg) return status("Completá los dos campos.");
+    $("send").disabled = true; status("Firmá en Freighter…");
+    try {
+      const sign = async (xdr) => {
+        const r = await window.freighterApi.signTransaction(xdr, { networkPassphrase: CONFIG.networkPassphrase, address: me });
+        if (r.error) throw new Error(r.error);
+        return r.signedTxXdr;
+      };
+      const { hash, id } = await client.thank(me, to, msg, sign);
+      status(`✅ Listo, agradecimiento #${id}. <a target=_blank href="https://stellar.expert/explorer/testnet/tx/${hash}">Ver prueba en Stellar Expert</a>`);
+      $("msg").value = ""; refresh();
+    } catch (e) { status("❌ " + e.message); }
+    $("send").disabled = false;
+  };
+
+  refresh();
+</script>
+</body>
+</html>

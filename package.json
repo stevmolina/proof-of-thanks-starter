@@ -1,0 +1,12 @@
+{
+  "name": "proof-of-thanks",
+  "private": true,
+  "scripts": {
+    "test": "cargo test",
+    "smoke": "node scripts/smoke-test.cjs",
+    "serve": "npx --yes serve docs"
+  },
+  "devDependencies": {
+    "@stellar/stellar-sdk": "17.4.0"
+  }
+}

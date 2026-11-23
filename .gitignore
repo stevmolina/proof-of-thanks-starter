@@ -1,0 +1,6 @@
+target/
+node_modules/
+.stellar/
+.soroban/
+*.secret
+.env
