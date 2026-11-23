@@ -1,33 +1,35 @@
-# Proof of Thanks: Stellar starter 💜
+# Proof of Thanks: starter de Stellar 💜
 
-Leave a public thank-you note on **Stellar Testnet**, signed with your wallet. No real money.
+Dejá un agradecimiento público en **Stellar Testnet**, firmado con tu wallet. Sin plata real.
 
-Built for **The Commit Club** at BAF × Stellar: Proof of Gratitude. Use it as-is or as the base for your own idea.
+Hecho para **The Commit Club** de BAF × Stellar: Proof of Gratitude. Usalo tal cual o como base para tu propia idea. Cuando termines, dejá tu firma en [Proof of Gratitude](https://github.com/mariaelisaaraya/Proof-of-Gratitude).
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/stevmolina/proof-of-thanks-starter)
 
-## What's inside
+Demo: [stevmolina.github.io/proof-of-thanks-starter](https://stevmolina.github.io/proof-of-thanks-starter/)
 
-- `contracts/gratitude`: a Soroban smart contract with `thank`, `count` and `get`.
-- `docs/`: a static page that connects [Freighter](https://www.freighter.app) and calls the contract. Published with GitHub Pages from `/docs`.
-- `scripts/`: `setup.sh` (tools + funded Testnet account), `deploy.sh` (test, build, deploy), `smoke-test.cjs` (end-to-end check).
+## Qué trae
 
-## Quick start
+- `contracts/gratitude`: un contrato Soroban con `thank`, `count` y `get`.
+- `docs/`: una página estática que conecta [Freighter](https://www.freighter.app) y llama al contrato. Se publica con GitHub Pages desde `/docs`.
+- `scripts/`: `setup.sh` (herramientas y cuenta de Testnet fondeada), `deploy.sh` (tests, build y deploy), `smoke-test.cjs` (prueba de punta a punta).
+
+## Inicio rápido
 
 ```bash
-bash scripts/setup.sh      # once
-bash scripts/deploy.sh     # deploy your contract to Testnet
-npx --yes serve docs        # open the page locally
+bash scripts/setup.sh      # una sola vez
+bash scripts/deploy.sh     # despliega tu contrato en Testnet
+npx --yes serve docs       # abrí la página localmente
 ```
 
-Then push to `main`. To publish the page: **Settings → Pages → Deploy from a branch → `main` / `/docs`** (or run `gh api -X POST repos/OWNER/REPO/pages -f "source[branch]=main" -f "source[path]=/docs"`).
+Después hacé push a `main`. Para publicar la página: **Settings → Pages → Deploy from a branch → `main` / `/docs`**.
 
-## With an AI agent
+## Con un agente de IA
 
-Install the Commit Club kit and run `/stellarize`. See [stellar-commit-club](https://github.com/stevmolina/stellar-commit-club).
+Instalá el kit del Commit Club y escribí `/stellarize`. Ver [stellar-commit-club](https://github.com/stevmolina/stellar-commit-club).
 
-## Wallet setup
+## Wallet
 
-1. Install [Freighter](https://www.freighter.app).
+1. Instalá [Freighter](https://www.freighter.app).
 2. Settings → Network → **Testnet**.
-3. Fund your account for free with [Friendbot](https://lab.stellar.org/account/fund).
+3. Fondeá tu cuenta gratis con [Friendbot](https://lab.stellar.org/account/fund).
