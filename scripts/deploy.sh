@@ -13,10 +13,13 @@ echo "▸ Building WASM"
 stellar contract build --package "$name" >/dev/null
 
 echo "▸ Deploying to Testnet"
-id=$(stellar contract deploy \
+if ! out=$(stellar contract deploy \
   --wasm "target/wasm32v1-none/release/${name//-/_}.wasm" \
-  --source-account me --network testnet --alias "$name" 2>/dev/null | tail -1)
-case "$id" in C*) ;; *) echo "Deploy failed"; exit 1 ;; esac
+  --source-account me --network testnet --alias "$name" 2>&1); then
+  echo "$out"; echo "Deploy failed (see error above). If it mentions funding: stellar keys fund me --network testnet"; exit 1
+fi
+id=$(echo "$out" | tail -1)
+case "$id" in C*) ;; *) echo "$out"; echo "Deploy failed: no contract id"; exit 1 ;; esac
 me=$(stellar keys address me)
 
 cat > docs/config.js <<EOF

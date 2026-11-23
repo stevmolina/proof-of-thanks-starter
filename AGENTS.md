@@ -5,7 +5,8 @@ A Stellar **Testnet** dApp: one Soroban contract (`contracts/gratitude`) and a s
 ## Hard rules
 
 - **Testnet only.** Never use mainnet, real funds, or a user's real wallet secret. RPC is `https://soroban-testnet.stellar.org`.
-- **Never commit secrets.** Keys live in the Stellar CLI keystore (`stellar keys`), never in the repo. Don't print secret keys.
+- **Never commit secrets.** Keys live in the Stellar CLI keystore (`stellar keys`), never in the repo. Never run `stellar keys secret` in a way that prints to the chat (the smoke test reads it internally; that's fine).
+- `scripts/setup.sh` exit code 2 means "use GitHub Codespaces" (Windows or missing compiler).
 - Keep `docs/` static: plain HTML/JS plus the CDN builds already in `index.html`. No bundler.
 - Small, reviewable commits with clear messages.
 
